@@ -1,0 +1,6 @@
+{
+  "watch": ["backend/src"],
+  "ext": "ts,json",
+  "ignore": ["frontend/**", "node_modules/**", "dist/**", "uploads/**", "images/**", "*.css", "*.html", "*.js"],
+  "delay": 1000
+}

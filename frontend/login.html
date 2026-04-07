@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In — NexMart</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <style>
+        .auth-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 80px 24px; position: relative; overflow: hidden; }
+        .auth-page::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(ellipse at 30% 20%, rgba(237, 4, 4, 0.762) 0%, transparent 50%), /* new css - Red gradient */ radial-gradient(ellipse at 70% 80%, rgba(7, 241, 229, 0.907) 0%, transparent 50%); /* new css - Teal gradient */ pointer-events: none; }
+        .auth-card { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--radius-xl); padding: 48px; width: 100%; max-width: 480px; position: relative; z-index: 1; box-shadow: 0 25px 80px rgba(0,0,0,0.3); }
+        .auth-card .brand { text-align: center; margin-bottom: 32px; }
+        .auth-card .brand h2 { font-size: 1.8rem; font-weight: 800; }
+        .auth-card .brand p { color: var(--text-tertiary); font-size: 0.9rem; margin-top: 8px; }
+        .auth-tabs { display: flex; gap: 0; margin-bottom: 32px; background: var(--bg-tertiary); border-radius: var(--radius-full); padding: 4px; }
+        .auth-tab { flex: 1; text-align: center; padding: 10px; border-radius: var(--radius-full); font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all var(--transition-fast); color: var(--text-tertiary); border: none; background: none; }
+        .auth-tab.active { background: var(--accent-primary); color: white; }
+        .auth-form { display: none; }
+        .auth-form.active { display: block; animation: fadeIn 0.3s ease; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-weight: 500; font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 8px; }
+        .form-group input, .form-group select { width: 100%; background: var(--bg-tertiary); border: 1.5px solid var(--border-color); border-radius: var(--radius-md); padding: 14px 18px; color: var(--text-primary); font-size: 0.95rem; transition: border-color var(--transition-fast); }
+        .form-group input:focus, .form-group select:focus { border-color: var(--accent-primary); outline: none; box-shadow: 0 0 0 3px rgba(219,26,26,0.15); /* new css - Red glow */ }
+        .form-group select option { background: var(--bg-tertiary); }
+        .role-chips { display: flex; gap: 12px; }
+        .role-chip { flex: 1; text-align: center; padding: 14px; border: 1.5px solid var(--border-color); border-radius: var(--radius-md); cursor: pointer; transition: all var(--transition-fast); }
+        .role-chip:hover { border-color: var(--border-color-hover); }
+        .role-chip.active { border-color: var(--accent-primary); background: rgba(219,26,26,0.1); /* new css - Red tinted background */ }
+        .role-chip i { font-size: 1.5rem; display: block; margin-bottom: 6px; }
+        .role-chip span { font-size: 0.85rem; font-weight: 600; }
+        .divider { display: flex; align-items: center; gap: 12px; margin: 24px 0; color: var(--text-tertiary); font-size: 0.85rem; }
+        .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border-color); }
+    </style>
+</head>
+<body>
+    <section class="auth-page">
+        <div class="auth-card">
+            <div class="brand">
+                <a href="index.html" style="text-decoration:none;color:var(--text-primary);">
+                    <h2>NexMart</h2>
+                </a>
+                <p>Welcome to the premium tech marketplace</p>
+            </div>
+
+            <div class="auth-tabs">
+                <button class="auth-tab active" onclick="switchTab('login')">Sign In</button>
+                <button class="auth-tab" onclick="switchTab('register')">Create Account</button>
+            </div>
+
+            <!-- Login Form -->
+            <form class="auth-form active" id="loginForm" onsubmit="handleLogin(event)">
+                <div id="loginError" class="alert alert-danger" style="display: none; font-size: 0.9rem; padding: 10px; background: rgba(219,26,26,0.1); color: #ff4444; border: 1px solid rgba(219,26,26,0.3);"></div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="loginEmail" placeholder="you@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPassword" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn btn-gradient w-100" id="loginBtn">
+                    <i class="bi bi-box-arrow-in-right"></i> Sign In
+                </button>
+                <div class="divider">or</div>
+                <p style="text-align:center;font-size:0.85rem;color:var(--text-tertiary);">
+                    <i class="bi bi-shield-lock" style="color:#DB1A1A;"></i> <!-- new css - Red color --> Admin: <code>admin@marketplace.com</code> / <code>SuperAdmin@123</code><br>
+                    <i class="bi bi-shop"></i> Vendor: <code>techhub@marketplace.com</code><br>
+                    <i class="bi bi-person"></i> Customer: <code>john@example.com</code>
+                </p>
+            </form>
+
+            <!-- Register Form -->
+            <form class="auth-form" id="registerForm" onsubmit="handleRegister(event)">
+                <div id="registerError" class="alert alert-danger" style="display: none; font-size: 0.9rem; padding: 10px; background: rgba(219,26,26,0.1); color: #ff4444; border: 1px solid rgba(219,26,26,0.3);"></div>
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="regName" placeholder="John Doe" required>
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="regEmail" placeholder="you@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="regPassword" placeholder="At least 6 characters" required minlength="6">
+                </div>
+                <div class="form-group">
+                    <label>I want to</label>
+                    <div class="role-chips">
+                        <div class="role-chip active" onclick="selectRole(this, 'customer')">
+                            <i class="bi bi-bag-heart"></i>
+                            <span>Buy Products</span>
+                        </div>
+                        <div class="role-chip" onclick="selectRole(this, 'vendor')">
+                            <i class="bi bi-shop"></i>
+                            <span>Sell Products</span>
+                        </div>
+                    </div>
+                    <input type="hidden" id="regRole" value="customer">
+                </div>
+                <button type="submit" class="btn btn-gradient w-100" id="regBtn">
+                    <i class="bi bi-person-plus"></i> Create Account
+                </button>
+            </form>
+        </div>
+    </section>
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        // Check URL params
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('tab') === 'register') switchTab('register');
+        if (params.get('role') === 'vendor') {
+            document.querySelectorAll('.role-chip').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.role-chip')[1].classList.add('active');
+            document.getElementById('regRole').value = 'vendor';
+        }
+
+        // If already logged in redirect
+        if (ApiClient.isLoggedIn()) {
+            const user = ApiClient.getUser();
+            window.location.href = user?.role === 'admin' ? 'admin-dashboard.html' : user?.role === 'vendor' ? 'vendor-dashboard.html' : 'index.html';
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+            if (tab === 'login') {
+                document.querySelectorAll('.auth-tab')[0].classList.add('active');
+                document.getElementById('loginForm').classList.add('active');
+            } else {
+                document.querySelectorAll('.auth-tab')[1].classList.add('active');
+                document.getElementById('registerForm').classList.add('active');
+            }
+        }
+
+        function selectRole(el, role) {
+            document.querySelectorAll('.role-chip').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            document.getElementById('regRole').value = role;
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const btn = document.getElementById('loginBtn');
+            const errDiv = document.getElementById('loginError');
+            errDiv.style.display = 'none';
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner spinner-sm" style="display:inline-block;vertical-align:middle;"></span>';
+            try {
+                const data = await ApiClient.login(
+                    document.getElementById('loginEmail').value,
+                    document.getElementById('loginPassword').value
+                );
+                let msg = 'Welcome back, ' + data.user.name + '!';
+                if (data.user.coupon_code) {
+                    msg += ' Your coupon: ' + data.user.coupon_code + ' (10% off!)';
+                }
+                showToast(msg, 'success');
+                setTimeout(() => {
+                    window.location.href = data.user.role === 'admin' ? 'admin-dashboard.html' : data.user.role === 'vendor' ? 'vendor-dashboard.html' : 'index.html';
+                }, 2000);
+            } catch (err) {
+                errDiv.textContent = err.message || 'Login failed. Please try again.';
+                errDiv.style.display = 'block';
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-box-arrow-in-right"></i> Sign In';
+            }
+        }
+
+        async function handleRegister(e) {
+            e.preventDefault();
+            const btn = document.getElementById('regBtn');
+            const errDiv = document.getElementById('registerError');
+            errDiv.style.display = 'none';
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner spinner-sm" style="display:inline-block;vertical-align:middle;"></span>';
+            try {
+                const data = await ApiClient.register(
+                    document.getElementById('regName').value,
+                    document.getElementById('regEmail').value,
+                    document.getElementById('regPassword').value,
+                    document.getElementById('regRole').value
+                );
+                let msg = 'Account created! Welcome, ' + data.user.name + '!';
+                if (data.user.coupon_code) {
+                    msg += ' Your coupon: ' + data.user.coupon_code + ' (10% off!)';
+                }
+                showToast(msg, 'success');
+                setTimeout(() => {
+                    window.location.href = data.user.role === 'vendor' ? 'vendor-dashboard.html' : 'index.html';
+                }, 2000);
+            } catch (err) {
+                errDiv.textContent = err.message || 'Registration failed. Please try again.';
+                errDiv.style.display = 'block';
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-person-plus"></i> Create Account';
+            }
+        }
+    </script>
+</body>
+</html>
